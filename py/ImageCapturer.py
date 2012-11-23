@@ -1,5 +1,4 @@
 import cv, cv2, sys
-sys.path.append('/home/kelly/Code/cv')
 import numpy as np
 from StillStarter import StillStarter
 from FaceRecognizer import FaceRecognizer
@@ -64,11 +63,18 @@ def capture_images(inqueue,return_queue):
 	return
 
 if __name__ == '__main__':			## Just wait for 5 images to be captured						
-	out = Queue(maxsize=5)			## Then kill the thread
+	out = Queue(maxsize=10)			## Then kill the thread
 	kill_queue  = Queue(maxsize=1)
 	capture_images(kill_queue,out)
 	for x in range(5):
 		print x
-		out.get()
+		im = out.get()
+		cv.ShowImage('face',im)
+		while 1:
+			k = cv2.waitKey()
+			print k
+			if k == 27:
+				cv2.destroyAllWindows()
+				break
 	kill_queue.put(None)
 

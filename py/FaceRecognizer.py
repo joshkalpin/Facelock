@@ -28,7 +28,7 @@ class FaceRecognizer:
 			mat_img = cv.fromarray(img)
 
 			storage = cv.CreateMemStorage()
-			cascade = cv.Load("/home/kelly/Code/cv/haarcascade_frontalface_alt.xml")
+			cascade = cv.Load("./../haar/haarcascade_frontalface_alt.xml")
 			detected = cv.HaarDetectObjects(mat_img, cascade,
 				 storage, 1.2, 2,cv.CV_HAAR_DO_CANNY_PRUNING, (100,100))
 			if detected:
