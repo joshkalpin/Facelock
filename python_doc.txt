@@ -3,6 +3,9 @@ ImageCapturer.py
 	def capture_images(inqueue,return_queue):
 	''''Function which calles Facerecognizer and StillStarter. 
 
+	Captures images of faces from webcam, putting them in return_queue. To end the process,
+	inqueue.put(None). Lives in its own thread.'''
+
 FaceRecognizer.py
 	class FaceRecognizer:
 	'''This lives in its own thread, and waits for input from inqueue. When an image is placed in inqueue,
