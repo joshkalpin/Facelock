@@ -3,7 +3,6 @@ import cv, cv2
 from numpy import asarray
 from numpy.linalg import eig as eigenvec
 
-
 class FaceRecognizer:
 
 	def __init__(self, inqueue, outqueue):

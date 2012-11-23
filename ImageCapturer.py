@@ -13,7 +13,6 @@ start_still_cap = StillStarter(1,cv2,img_queue)
 c = cv2.VideoCapture(0)
 _, f = c.read()
 
-
 avg = np.float32(f)
 avg2= np.float32(f)
 dif  = np.float32(f)
