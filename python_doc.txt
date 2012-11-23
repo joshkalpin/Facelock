@@ -1,0 +1,38 @@
+ImageCapturer.py
+
+	def capture_images(inqueue,return_queue):
+	''''Function which calles Facerecognizer and StillStarter. 
+
+	Captures images of faces from webcam, putting them in return_queue. To end the process,
+	inqueue.put(None). Lives in its own thread.'''
+
+FaceRecognizer.py
+	class FaceRecognizer:
+	'''This lives in its own thread, and waits for input from inqueue. When an image is placed in inqueue,
+		any faces in that image will be returned as subrectangles in outqueue.'''
+
+		General use:
+
+			-Instantiate with two queues, one for input one for output.
+			-After initialization, call .start_thread
+			-Will wait in its own thread for an image to be put in inqueue
+			-When finished, will put the picture of just a face (if one is detected) in outqueue
+			-Comment out line 'cv.ShowImage('face',cropped_image)' to stop image of face in gui
+
+		Methods:
+
+			__init__(self, inqueue, outqueue):
+				Queue.Queue inqueue: used to pass images to the instance
+				Queue.Queue outqueue: used to pass images back to the caller
+
+			start_thread(self):
+				Call this once per instance to set up the thread.
+
+			analyse_picture(self):
+				Do not call this method directly. It is called by start_thread and blocks
+				until an image is placed in inqueue
+
+StillStarter.py(max, cv2, outqueue:
+	class StillStarter
+		-instantiate with the max number of processes allowed, your cv2 namespace, and a
+			queue which will accept images from it.
