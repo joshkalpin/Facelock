@@ -38,7 +38,8 @@ class FaceRecognizer:
 					#cv.Rectangle(mat_img,p1,p2, cv.Scalar(0,255,0,0))
 
 					cropped_image = cv.GetSubRect(mat_img,face[0])
-					cv.ShowImage('face',cropped_image)
 
-					## Replace this line with something other than sums.
-					print sum(sum(sum(asarray(cropped_image))))
+					## Replace this line with something other than sums if you're interested.
+					## print sum(sum(sum(asarray(cropped_image))))
+
+					self.outq.put(cropped_image)

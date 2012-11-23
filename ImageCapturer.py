@@ -1,51 +1,74 @@
-import cv2, sys
+import cv, cv2, sys
 sys.path.append('/home/kelly/Code/cv')
 import numpy as np
 from StillStarter import StillStarter
 from FaceRecognizer import FaceRecognizer
-from Queue import Queue
+from Queue import Queue, Empty
+from threading import Thread
 
-img_queue = Queue(maxsize = 5)
-rtn_queue = Queue(maxsize = 5)
+def capture_images(inqueue,return_queue):
+	'''Captures images of faces from webcam, putting them in return_queue. To end the process,
+	inqueue.put(None). Lives in its own thread.'''
 
-start_still_cap = StillStarter(1,cv2,img_queue)
+	def run():
+		'''Does all the dirty work, so we can make a thread.'''
 
-c = cv2.VideoCapture(0)
-_, f = c.read()
+		img_queue = Queue(maxsize = 5)
 
-avg = np.float32(f)
-avg2= np.float32(f)
-dif  = np.float32(f)
+		start_still_cap = StillStarter(1,cv2,img_queue)
 
-recognizer = FaceRecognizer(img_queue,rtn_queue)
-recognizer.start_thread()
+		c = cv2.VideoCapture(0)
+		_, f = c.read()
 
+		avg = np.float32(f)
+		dif  = np.float32(f)
 
-while 1:
-	_, f = c.read()
+		recognizer = FaceRecognizer(img_queue,return_queue)
+		recognizer.start_thread()
 
-	cv2.accumulateWeighted(f,avg,0.3)
-	cv2.accumulateWeighted(f,avg2,0.7)
+		done = 1
+		while done != None:
 
-	dif = f-avg
+			try: done = inqueue.get(block=False)
+			except Empty: pass
+			_, f = c.read()
 
-	res1 = cv2.convertScaleAbs(avg)
-	res2 = cv2.convertScaleAbs(avg2)
-	res3 = cv2.convertScaleAbs(dif)
+			cv2.accumulateWeighted(f,avg,0.3)
 
-	cv2.imshow('img',f)
-	#cv2.imshow('Dif',res3)
-	k = cv2.waitKey(20)
+			dif = f-avg
 
-	move_value = np.sum(dif)
+			res3 = cv2.convertScaleAbs(dif)
 
-	if move_value > 1000000:
-		#print "Movement!", move_value
-		start_still_cap(0.5,c)
+			## Uncomment to show webcam video
+			## cv2.imshow('img',f)
 
-	if k == 27:
-		img_queue.put(None)
-		break
+			## Uncomment to show the difference between f and avg
+			## cv.ShowImage('Dif',cv.fromarray(dif))
+			k = cv2.waitKey(20)
 
-cv2.destroyAllWindows()
-c.release
+			move_value = np.sum(dif)
+
+			if move_value > 1000000:
+				#print "Movement!", move_value
+				start_still_cap(0.5,c)
+
+			if k == 27 or done ==  None:
+				img_queue.put(None)
+				break
+
+		cv2.destroyAllWindows()
+		c.release()
+
+	t = Thread(target = run)
+	t.start()
+	return
+
+if __name__ == '__main__':			## Just wait for 5 images to be captured						
+	out = Queue(maxsize=5)			## Then kill the thread
+	kill_queue  = Queue(maxsize=1)
+	capture_images(kill_queue,out)
+	for x in range(5):
+		print x
+		out.get()
+	kill_queue.put(None)
+
