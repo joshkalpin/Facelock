@@ -10,7 +10,8 @@ class StartScreen(wx.Frame):
                 style=wx.CAPTION|wx.CLOSE_BOX)
         self.controller = loader.UserController()
         self.pw_hasher = hasher.PasswordHasher()
-        
+        self.button_text = "Lock!"
+
         self.InitBasicUI()
         if self.controller.is_empty():
             self.InitEntryUI()
@@ -24,9 +25,10 @@ class StartScreen(wx.Frame):
         self.root = wx.Panel(self)
         self.font = wx.SystemSettings_GetFont(wx.SYS_SYSTEM_FONT)
         self.font.SetPointSize(9)
+        self.root_layout = wx.BoxSizer(wx.VERTICAL)
+
 
     def InitEntryUI(self):
-        self.root_layout = wx.BoxSizer(wx.VERTICAL)
         info_row = wx.BoxSizer(wx.HORIZONTAL)
 
         info_text = wx.StaticText(self.root, style=wx.ALIGN_CENTRE, label="It appears there are no users created, please enter your information to create a user")
@@ -37,8 +39,6 @@ class StartScreen(wx.Frame):
         self.root_layout.Add(info_row, border=9)
         self.root_layout.Add((-1, 10))
         self.button_text = "Create!"
-
-
 
     def InitUI(self):
         username_row = wx.BoxSizer(wx.HORIZONTAL)
@@ -85,9 +85,11 @@ class StartScreen(wx.Frame):
             new_user = loader.User(0, usr, str(time.time()), pw_hash)
             self.controller.addUser(new_user)
             self.controller.load_users()
-
-        if usr == pwd:
-            print "match!"
+        else:
+            pw_hash = self.pw_hasher.encode(pwd)
+            for u in self.controller.users:
+                if u.password == pw_hash and u.name == usr:
+                    print "huzzah!"
 
     def close(self, e):
         self.Destroy()
