@@ -4,6 +4,8 @@ from threading import Timer
 class StillStarter:
 
 	def __init__(self,max, cv2, outqueue):
+		''' max is the max number of threads to allow. cv2 is a cv2 namespace, outqueue
+		is used to pass data between threads'''
 		self.queue = outqueue
 		self.max = max
 		self.cur = 0
