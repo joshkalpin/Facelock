@@ -6,7 +6,7 @@ import PasswordHasher as hasher
 class StartScreen(wx.Frame):
   
     def __init__(self, parent, title):
-        super(StartScreen, self).__init__(parent, title=title, size=(390, 180),
+        super(StartScreen, self).__init__(parent, title=title, size= wx.DisplaySize(),
                 style=wx.CAPTION|wx.CLOSE_BOX)
         self.controller = loader.UserController()
         self.pw_hasher = hasher.PasswordHasher()
@@ -91,6 +91,8 @@ class StartScreen(wx.Frame):
                 if u.password == pw_hash and u.name == usr:
                     print "huzzah!"
 
+        self.Destroy()
+
     def close(self, e):
         self.Destroy()
 
@@ -99,5 +101,5 @@ class StartScreen(wx.Frame):
 if __name__ == '__main__':
   
     app = wx.App()
-    StartScreen(None, title='Go To Class')
+    StartScreen(None, title='Facelock')
     app.MainLoop()
